@@ -1,5 +1,6 @@
 package io.confluent.fstr;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.sink.SinkRecord;
 
@@ -12,16 +13,26 @@ public class SinkRecordPayload {
     private Schema valueSchema;
     private String topic;
 
+
+    private Integer kafkaPartition;
+    private String timeStampType;
+    private Collection<KeyValue> records = new ArrayList<KeyValue>();
+
+
+
     public SinkRecordPayload(){};
-    public SinkRecordPayload(Collection<SinkRecord> records) {
+    public SinkRecordPayload(Collection<SinkRecord> records) throws JsonProcessingException {
+
+
         SinkRecord first = records.iterator().next();
         this.keySchema = first.keySchema();
         this.valueSchema = first.valueSchema();
         this.topic = first.topic();
         this.kafkaPartition = first.kafkaPartition();
         this.timeStampType = first.timestampType().name;
+        PayloadConvertor payloadConvertor = new PayloadConvertor();
         for (SinkRecord record : records) {
-            this.records.add(new KeyValue(record.key(), record.value(), record.timestamp(), record.kafkaOffset()));
+            this.records.add(new KeyValue(record.key(), payloadConvertor.convert(record), record.timestamp(), record.kafkaOffset()));
         }
     }
 
@@ -74,10 +85,6 @@ public class SinkRecordPayload {
     public void setRecords(Collection<KeyValue> records) {
         this.records = records;
     }
-
-    private Integer kafkaPartition;
-    private String timeStampType;
-    private Collection<KeyValue> records = new ArrayList<KeyValue>();
 
 
     public static class KeyValue {

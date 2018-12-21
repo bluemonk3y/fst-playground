@@ -72,9 +72,10 @@ public class AwsLambdaTaskTest {
 
     PayloadConvertor jsonPayloadConverter = new PayloadConvertor();
 
+    String payload1 = jsonPayloadConverter.convertRecords(records);
     InvokeRequest request = new InvokeRequest()
             .withFunctionName("serverless-simple-http-endpoint-beta-recordsHandler")
-            .withInvocationType(InvocationType.RequestResponse).withPayload(jsonPayloadConverter.convertRecords(records));
+            .withInvocationType(InvocationType.RequestResponse).withPayload(payload1);
 
 
     InvokeResult invoke = faas.invoke(request);
