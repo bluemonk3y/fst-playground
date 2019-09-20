@@ -43,7 +43,7 @@ public class IntegrationTestHarness {
 
   private static final long TEST_RECORD_FUTURE_TIMEOUT_MS = 5000;
 
-  public utils.EmbeddedSingleNodeKafkaCluster embeddedKafkaCluster;
+  public EmbeddedSingleNodeKafkaCluster embeddedKafkaCluster;
   private AdminClient adminClient;
   private KafkaTopicClient topicClient;
   Map<String, Object> configMap = new HashMap<>();
@@ -51,7 +51,7 @@ public class IntegrationTestHarness {
   private String bootstrapServer;
 
   public void start() throws Exception {
-    embeddedKafkaCluster = new utils.EmbeddedSingleNodeKafkaCluster();
+    embeddedKafkaCluster = new EmbeddedSingleNodeKafkaCluster();
     embeddedKafkaCluster.start();
 
     configMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, embeddedKafkaCluster.bootstrapServers());

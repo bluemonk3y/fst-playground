@@ -1,4 +1,4 @@
-/**
+package io.confluent.fstr.utils; /**
  * Copyright 2018 Confluent Inc.
  *
  * Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, Version 3.0 (the "License");
@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package utils;
 
 
 import kafka.server.KafkaConfig$;
+import org.apache.kafka.streams.integration.utils.KafkaEmbedded;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
+
+import static org.apache.kafka.streams.KafkaStreamsTest.CLUSTER;
 
 /**
  * Runs an in-memory, "embedded" Kafka cluster with 1 ZooKeeper instance and 1 Kafka broker.
@@ -66,7 +69,7 @@ public class EmbeddedSingleNodeKafkaCluster extends ExternalResource {
     Properties effectiveBrokerConfig = effectiveBrokerConfigFrom(brokerConfig, zookeeper);
     log.debug("Starting a Kafka instance on port {} ...",
             effectiveBrokerConfig.getProperty(KafkaConfig$.MODULE$.PortProp()));
-    broker = new KafkaEmbedded(effectiveBrokerConfig);
+    broker = new KafkaEmbedded(effectiveBrokerConfig, CLUSTER.time);
     log.debug("Kafka instance is running at {}, connected to ZooKeeper at {}",
             broker.brokerList(), broker.zookeeperConnect());
   }
@@ -130,7 +133,7 @@ public class EmbeddedSingleNodeKafkaCluster extends ExternalResource {
   private void createTopic(String topic,
                            int partitions,
                            int replication,
-                           Properties topicConfig) {
+                           Map<String, String> topicConfig) {
     broker.createTopic(topic, partitions, replication, topicConfig);
   }
 

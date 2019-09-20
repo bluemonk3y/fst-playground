@@ -1,4 +1,4 @@
-/**
+package io.confluent.fstr.utils; /**
  * Copyright 2018 Confluent Inc.
  *
  * Licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, Version 3.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package utils;
 
 import kafka.admin.AdminUtils;
 import kafka.admin.RackAwareMode;
