@@ -30,3 +30,9 @@ functions:
       - http:
           path: recordsHandler
           method: get
+  connectorHandler:
+    handler: handler.conectorHandler
+    events:
+      - http:
+          path: connectorHandler
+          method: get

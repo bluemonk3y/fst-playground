@@ -1,7 +1,14 @@
 {
-  "name": "aws-serve-simple-http-endpoint",
+  "name": "fstr-playground",
   "version": "1.0.0",
-  "description": "Example demonstrates how to setup a simple HTTP GET endpoint",
-  "author": "",
-  "license": "MIT"
+  "author": "blu3monk3y",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "test": "mocha"
+  },
+  "main": "handler.js",
+  "description": "",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
 }

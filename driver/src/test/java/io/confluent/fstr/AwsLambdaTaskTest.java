@@ -18,6 +18,11 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 import static org.apache.kafka.connect.data.Schema.STRING_SCHEMA;
@@ -83,36 +88,98 @@ public class AwsLambdaTaskTest {
     System.out.println("resuts:" + new String(payload.array()));
   }
 
+
   @Test
   public void simpleLambdaTest() {
 
-
-    AWSLambdaAsync faas = getFaaS();
+    String sendPayload = "[\n" +
+            "    {\n" +
+            "        \"payload\": {\n" +
+            "            \"timestamp\": 1562844607000,\n" +
+            "            \"topic\": \"mytopic\",\n" +
+            "            \"partition\": 1,\n" +
+            "            \"offset\": 43822,\n" +
+            "            \"key\": \"key1\",\n" +
+            "            \"value\": \"value1\"\n" +
+            "        }\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"payload\": {\n" +
+            "            \"timestamp\": 1562844608000,\n" +
+            "            \"topic\": \"mytopic\",\n" +
+            "            \"partition\": 1,\n" +
+            "            \"offset\": 43823,\n" +
+            "            \"key\": \"key2\",\n" +
+            "            \"value\": \"value2\"\n" +
+            "        }\n" +
+            "    }\n" +
+            "]";
 
     InvokeRequest request = new InvokeRequest()
-      .withFunctionName("serverless-simple-http-endpoint-beta-recordsHandler")
+            .withFunctionName("serverless-simple-http-endpoint-beta-connectorHandler")
+            .withInvocationType(InvocationType.RequestResponse).withPayload(sendPayload);
+
+        AWSLambdaAsync faas = getFaaS();
+        InvokeResult invoke = faas.invoke(request);
+        ByteBuffer payload = invoke.getPayload();
+        System.out.println(">:" + invoke.getStatusCode()  +" Payload: " + new String(payload.array()));
+
+  }
+
+  @Test
+  public void scaleLambdaTest() {
+
+
+//    AWSLambdaAsync faas = getFaaS();
+
+    InvokeRequest request = new InvokeRequest()
+//      .withFunctionName("serverless-simple-http-endpoint-beta-recordsHandler")
+            .withFunctionName("serverless-simple-http-endpoint-beta-neilHandler")
       .withInvocationType(InvocationType.RequestResponse).withPayload("{ \"stuff\": 100 }");
 
     long start = System.currentTimeMillis();
 
-    InvokeResult coldInvocation = faas.invoke(request);
+//    InvokeResult coldInvocation = faas.invoke(request);
 
 
-    int totalMessages = 100;
+    int totalMessages = 10000;
     long middle = System.currentTimeMillis();
-    for (int i = 0; i< totalMessages; i++) {
-    InvokeResult invoke = faas.invoke(request);
-    ByteBuffer payload = invoke.getPayload();
-      System.out.println("resuts:" + new String(payload.array()));
-    }
-    long end = System.currentTimeMillis();
-    long hotElapsed = end - middle;
-    double seconds = (double)hotElapsed/1000.0;
-    double ratePerSecond = (double)totalMessages/seconds;
-    double avgHotElaped = (double)hotElapsed/(double)totalMessages;
+    ExecutorService executorService = Executors.newFixedThreadPool(100);
+    final AtomicInteger total = new AtomicInteger();
+    final AtomicLong totalElapsed = new AtomicLong();
 
-    System.out.println("Elapsed Hot:" + seconds + " Total:" + (end - start));
-    System.out.println("avgHotPerEventMs:" + avgHotElaped + " cold:" + (middle - start) + " hot EPS:" + ratePerSecond);
+    for (int i = 0; i< totalMessages; i++) {
+
+      final int cc = i;
+      executorService.submit(() -> {
+
+        AWSLambdaAsync faas = getFaaS();
+        long a1 = System.currentTimeMillis();
+        InvokeResult invoke = faas.invoke(request);
+        ByteBuffer payload = invoke.getPayload();
+        long a2 = System.currentTimeMillis();
+        System.out.println(cc + "-" + total.incrementAndGet() + ">:" + invoke.getStatusCode() + " latency:" + (a2-a1)  +" Payload: " + new String(payload.array()));
+        totalElapsed.addAndGet(a2-a1);
+
+      });
+
+   }
+    try {
+      executorService.shutdown();
+      executorService.awaitTermination(20, TimeUnit.MINUTES);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+
+    long end = System.currentTimeMillis();
+//    long hotElapsed = end - middle;
+    double seconds = (double)(end - start)/1000.0;
+    double ratePerSecond = (double)totalMessages/seconds;
+    double avgHotElaped = (double)totalElapsed.get()/(double)totalMessages;
+
+    System.out.println("Elapsed:" + seconds + " Rate-EventsPerSecond:" + ratePerSecond);
+    System.out.println("avgHotElapsedMs:" + avgHotElaped + " cold:" + (middle - start));
   }
 
   private AWSLambdaAsync getFaaS() {
