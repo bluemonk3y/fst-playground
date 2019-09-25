@@ -8,15 +8,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:connect-api:2.0.1-cp1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:kafka-clients:2.0.1-cp1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.lz4:lz4-java:1.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.ws.rs:javax.ws.rs-api:2.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:connect-json:2.0.1-cp1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:connect-api:2.3.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:kafka-clients:2.3.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.luben:zstd-jni:1.4.0-1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.lz4:lz4-java:1.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.26" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.ws.rs:javax.ws.rs-api:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.kafka:connect-json:2.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.9" level="project" />
     <orderEntry type="library" name="Maven: io.confluent:kafka-connect-avro-converter:4.0.0" level="project" />
     <orderEntry type="library" name="Maven: io.confluent:kafka-avro-serializer:4.0.0" level="project" />
     <orderEntry type="library" name="Maven: io.confluent:kafka-schema-registry-client:4.0.0" level="project" />
